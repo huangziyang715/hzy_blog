@@ -1,0 +1,48 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/Layout.astro";
+import Sidebar from "../../components/Sidebar.astro";
+import NoteCard from "../../components/NoteCard.astro";
+
+const allNotes = await getCollection("notes", ({ data }) => {
+  return data.draft !== true;
+});
+
+export async function getStaticPaths() {
+  const notes = await getCollection("notes", ({ data }) => {
+    return data.draft !== true;
+  });
+
+  const categories = [...new Set(notes.map((note) => note.data.category))];
+
+  return categories.map((category) => ({
+    params: { category },
+    props: {
+      category,
+      notes: notes
+        .filter((note) => note.data.category === category)
+        .sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
+    },
+  }));
+}
+
+const { category, notes } = Astro.props;
+---
+
+<BaseLayout title={`分类：${category}`} description={`分类 ${category} 下的笔记。`}>
+  <main class="layout">
+    <Sidebar notes={allNotes} />
+
+    <section class="main-content">
+      <section class="hero card">
+        <p class="eyebrow">category</p>
+        <h1>分类：{category}</h1>
+        <p>共 {notes.length} 篇笔记。</p>
+      </section>
+
+      <div class="note-list">
+        {notes.map((note) => <NoteCard note={note} />)}
+      </div>
+    </section>
+  </main>
+</BaseLayout>

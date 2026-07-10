@@ -1,0 +1,30 @@
+---
+const { note } = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const url = (path = "/") => {
+  const basePath = base.replace(/\/$/, "");
+  const cleanPath = path.replace(/^\/+/, "");
+  return `${basePath}/${cleanPath}`;
+};
+const formattedDate = note.data.date.toLocaleDateString("zh-CN");
+const noteUrl = url(`/notes/${note.id}/`);
+const categoryUrl = url(`/categories/${note.data.category}/`);
+const tagUrl = (tag) => url(`/tags/${tag}/`);
+---
+
+<article class="note-card card">
+  <div class="note-card-link">
+    <div class="note-card-meta">
+      <span>{formattedDate}</span>
+      <a href={categoryUrl}>{note.data.category}</a>
+    </div>
+
+    <h3><a href={noteUrl}>{note.data.title}</a></h3>
+    <p>{note.data.description}</p>
+
+    <div class="tag-cloud">
+      {note.data.tags.map((tag) => <a class="tag" href={tagUrl(tag)}>{tag}</a>)}
+    </div>
+  </div>
+</article>

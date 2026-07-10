@@ -1,0 +1,58 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/Layout.astro";
+import Sidebar from "../components/Sidebar.astro";
+
+const notes = await getCollection("notes", ({ data }) => {
+  return data.draft !== true;
+});
+
+notes.sort((a, b) => {
+  return b.data.date.getTime() - a.data.date.getTime();
+});
+
+const groups = notes.reduce((result, note) => {
+  const year = String(note.data.date.getFullYear());
+  result[year] ??= [];
+  result[year].push(note);
+  return result;
+}, {});
+
+const years = Object.keys(groups).sort((a, b) => Number(b) - Number(a));
+const base = import.meta.env.BASE_URL;
+const url = (path = "/") => {
+  const basePath = base.replace(/\/$/, "");
+  const cleanPath = path.replace(/^\/+/, "");
+  return `${basePath}/${cleanPath}`;
+};
+---
+
+<BaseLayout title="归档" description="按年份整理的笔记归档。">
+  <main class="layout">
+    <Sidebar notes={notes} />
+
+    <section class="main-content">
+      <section class="hero card">
+        <p class="eyebrow">archive</p>
+        <h1>归档</h1>
+        <p>按年份浏览已经发布的笔记。</p>
+      </section>
+
+      <div class="archive-list">
+        {years.map((year) => (
+          <section class="archive-year card">
+            <h2>{year}</h2>
+            <div class="archive-items">
+              {groups[year].map((note) => (
+                <a class="archive-item" href={url(`/notes/${note.id}/`)}>
+                  <time>{note.data.date.toLocaleDateString("zh-CN")}</time>
+                  <span>{note.data.title}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
+  </main>
+</BaseLayout>

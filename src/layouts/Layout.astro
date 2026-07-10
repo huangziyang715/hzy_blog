@@ -1,0 +1,44 @@
+---
+import "../styles/global.css";
+
+const {
+  title = "hzy的博客",
+  description = "这里会用来整理课程笔记、论文阅读和PPT及课本存储。"
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const url = (path = "/") => {
+  const basePath = base.replace(/\/$/, "");
+  const cleanPath = path.replace(/^\/+/, "");
+  return `${basePath}/${cleanPath}`;
+};
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <div class="site-shell">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <a class="logo" href={url()}>hzy的博客</a>
+
+          <nav class="nav">
+            <a href={url()}>首页</a>
+            <a href={url("/notes/")}>笔记</a>
+            <a href={url("/archive/")}>归档</a>
+            <a href={url("/about/")}>关于</a>
+          </nav>
+        </div>
+      </header>
+
+      <slot />
+    </div>
+  </body>
+</html>

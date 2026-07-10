@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/Layout.astro";
+import Sidebar from "../components/Sidebar.astro";
+import NoteCard from "../components/NoteCard.astro";
+
+const notes = await getCollection("notes", ({ data }) => {
+  return data.draft !== true;
+});
+
+notes.sort((a, b) => {
+  return b.data.date.getTime() - a.data.date.getTime();
+});
+---
+
+<BaseLayout title="笔记">
+  <main class="layout">
+    <Sidebar notes={notes} />
+
+    <section class="main-content">
+      <section class="hero card">
+        <p class="eyebrow">hello_world</p>
+        <p>
+          这里会用来整理课程笔记、论文阅读、PDF 资料、项目记录和一些慢慢想清楚的问题。
+        </p>
+      </section>
+
+      <section>
+        <h2 class="section-title">最近更新</h2>
+
+        <div class="note-list">
+          {notes.map((note) => <NoteCard note={note} />)}
+        </div>
+      </section>
+    </section>
+  </main>
+</BaseLayout>
