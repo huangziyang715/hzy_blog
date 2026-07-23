@@ -8,9 +8,29 @@ type: "md"
 draft: false
 ---
 
-# 我的第一篇笔记
+## 我的第一篇笔记
 
-这是正文。
+## 更新流程
+1. cd D:\hzy_blog
+2. npm run dev
+3. 新增或修改 src/content/notes 里的文章
+4. npm run build
+5. git add . / git commit -m "更新笔记" / git push
+6. 去 GitHub Actions 看绿色对勾
 
-以后我可以在这里整理课程笔记、论文阅读、项目记录和 PDF 资料。
+## 代码示例
 
+```javascript
+function bubbleSort(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < arr.length - 1 - i; j++) {
+      if (arr[j] > arr[j + 1]) {
+        let temp = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = temp;
+      }
+    }
+  }
+  return arr;
+}
+```
